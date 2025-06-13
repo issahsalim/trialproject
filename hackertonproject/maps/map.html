@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Styled Map Example</title>
+    <style>
+        #map {
+            height: 400px;
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="map"></div>
+
+    <script>
+        function initMap() {
+            const map = new google.maps.Map(document.getElementById("map"), {
+                center: { lat: 7.3507293043412805, lng: -2.3412888783288204 },
+                zoom: 10,
+                mapId: "832b5c0d4628c59cb7f15eb0",
+            });
+            
+            const myLocation = [
+                {
+                    title: "HALL2", 
+                    position: { lat:  7.349538127665702, lng: -2.343854749044612 },
+                    icon: {
+                        url: "https://cdn-icons-png.flaticon.com/512/684/684908.png",
+                        scaledSize: new google.maps.Size(30,30),
+                    },
+                },
+                
+                {
+                    title: "Hall1",
+                    position: { lat:     7.349348621990983, lng: -2.340360797431619 },
+                    icon: {
+                        url: "https://cdn-icons-png.flaticon.com/512/684/684908.png",
+                        scaledSize: new google.maps.Size(30,30),
+                    },
+                },
+
+                {
+                    title: "Administration Block",
+                    
+                    position: { lat: 7.348163039182451, lng: - 2.341747179855811 },
+                    icon: {
+                        url: "https://cdn-icons-png.flaticon.com/512/684/684908.png",
+                        scaledSize: new google.maps.Size(30,30),
+                    },
+                },
+            ];
+
+            // Loop through each marker
+            myLocation.forEach((place) => {
+                new google.maps.Marker({
+                    position: place.position,
+                    map: map,
+                    title: place.title,
+                    icon: place.icon,
+                });
+            });
+        }
+
+        window.initMap = initMap;
+    </script>
+
+    <script
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA3_glrrboLGSAeZ2-Fx1xbbeN2BXyPHQA&callback=initMap&libraries=maps,marker&map_ids=832b5c0d4628c59cb7f15eb0"
+        async defer></script>
+</body>
+
+</html>

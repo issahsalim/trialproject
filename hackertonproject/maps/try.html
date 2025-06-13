@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+     <div class="questions" data-question="what is your name"> what is your name</div>
+     <div class="questions" data-question="how are you"> how are you</div>
+     <div class="questions" data-question="where are u from">where are u from</div>
+     
+    <input type="text" id="input">
+
+    <button onclick="Locate()"> Locate me</button>
+</body>
+<script>
+
+     questions=document.querySelectorAll('.questions') 
+     questions.forEach((question)=>{ 
+        question.addEventListener('click',(event)=>{
+            let mainQuestion=event.target.getAttribute('data-question') 
+            document.getElementById('input').value=mainQuestion
+        })
+     })
+
+     function Locate(){
+        if(navigator.geolocation){
+            navigator.geolocation.getCurrentPosition((showpostion, showerror)=>{
+             
+            })
+        }
+     }
+     function showpostion(){
+        
+     }
+</script>
+</html>

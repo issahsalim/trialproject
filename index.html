@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Campus Navigator</title>
+
+    <style>
+        #map {
+            height: 500px;
+            width: 100%;
+        }
+
+        #controls {
+            margin: 10px;
+        }
+
+        #startBtn {
+            display: none;
+            padding: 10px 20px;
+            background: green;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+
+</head>
+
+<body>
+
+     <div class="scrolling">
+      <button id="btn"><i class="fa-brands fa-google-scholar"></i></button>
+    </div>
+
+    <div id="controls">
+        <input id="searchInput" type="text" placeholder="Search a place..." />
+        <button id="startBtn">Start Navigation</button>
+    </div>
+
+    <div id="map"></div>
+
+    <!-- Google Maps Script with YOUR API KEY -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCafX1QPC_yhAnBuffdjSilnybuGlpgPcM=&callback=initMap"
+        async defer></script>
+        
+
+<script>
+
+  const ScrollFunction = () => {
+        if (
+          document.body.scrollTop > 120 ||
+          document.documentElement.scrollTop > 120
+        ) {
+          ScrollTop.style.display = "block";
+        } else {
+          ScrollTop.style.display = "none";
+        }
+      };
+
+      window.addEventListener("scroll", () => {
+        ScrollFunction();
+      });
+
+      ScrollTop.addEventListener("click", () => {
+
+        document.documentElement.scrollTop = 0;
+        document.body.scrollTop = 0;
+      });
+
+        let map;
+        let userMarker;
+        let destinationMarker;
+        let directionsService;
+        let directionsRenderer;
+        let selectedPlace;
+
+        function initMap() {
+            // Init Map Center
+            map = new google.maps.Map(document.getElementById("map"), {
+                center: { lat: 7.350, lng: -2.340 },
+                zoom: 15,
+            });
+
+            directionsService = new google.maps.DirectionsService();
+            directionsRenderer = new google.maps.DirectionsRenderer();
+            directionsRenderer.setMap(map);
+
+            // Setup Place Autocomplete
+            const input = document.getElementById("searchInput");
+            const autocomplete = new google.maps.places.Autocomplete(input);
+            autocomplete.bindTo("bounds", map);
+
+            autocomplete.addListener("place_changed", () => {
+                const place = autocomplete.getPlace();
+                if (!place.geometry || !place.geometry.location) {
+                    alert("Place not found");
+                    return;
+                }
+
+                selectedPlace = place.geometry.location;
+
+                if (destinationMarker) destinationMarker.setMap(null);
+
+                destinationMarker = new google.maps.Marker({
+                    position: selectedPlace,
+                    map: map,
+                    title: place.name,
+                });
+
+                map.panTo(selectedPlace);
+                map.setZoom(17);
+                document.getElementById("startBtn").style.display = "inline-block";
+            });
+
+            // Handle Start Button
+            document.getElementById("startBtn").addEventListener("click", () => {
+                if (!selectedPlace) return;
+
+                navigator.geolocation.getCurrentPosition((pos) => {
+                    const currentPos = {
+                        lat: pos.coords.latitude,
+                        lng: pos.coords.longitude,
+                    };
+
+                    if (userMarker) userMarker.setMap(null);
+
+                    userMarker = new google.maps.Marker({
+                        position: currentPos,
+                        map: map,
+                        label: "You",
+                    });
+
+                    directionsService.route(
+                        {
+                            origin: currentPos,
+                            destination: selectedPlace,
+                            travelMode: google.maps.TravelMode.WALKING,
+                        },
+                        (result, status) => {
+                            if (status === "OK") {
+                                directionsRenderer.setDirections(result);
+                            } else {
+                                alert("Direction request failed.");
+                            }
+                        }
+                    );
+                });
+            });
+        }
+
+        window.initMap = initMap;
+    </script>
+</body>
+
+</html>

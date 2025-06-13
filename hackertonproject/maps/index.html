@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Campus Map with Search</title>
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: sans-serif;
+        }
+
+        #map {
+            height: 90vh;
+            width: 60%;
+            border: 3px solid black;
+            margin-left: 500px;
+        }
+
+        #search-box {
+            padding: 10px;
+            text-align: center;
+            background-color: #f0f0f0;
+            z-index: 100;
+        }
+
+        input[type="text"] {
+            padding: 8px;
+            width: 200px;
+        }
+
+        button {
+            padding: 8px 12px;
+            cursor: pointer;
+        }
+
+        .sideinfo {
+            position: fixed;
+            padding: 30px;
+            background-color: rgb(5, 4, 4);
+            top: 0;
+            z-index: 1;
+            bottom: 0;
+            width: 200px;
+            text-align: center;
+            color: white
+        }
+
+        .questions {
+            cursor: pointer;
+            margin-top: 20px;
+        }
+    </style>
+
+</head>
+
+<body>
+    <div class="sideinfo">
+        <h3><u>Some Locations</u></h3>
+        <div class="questions" data-question="VC OFFICE"> VC OFFICE</div>
+        <div class="questions" data-question="Appiahene Office"> Appiahene Office</div>
+        <div class="questions" data-question="DEANS OFFICE">DEANS OFFICE</div>
+    </div>
+    <div id="search-box">
+        <input type="text" id="placeInput" placeholder="Search for a place..." />
+        <button onclick="searchPlace()">Search</button>
+    </div>
+
+    <div id="map"></div>
+    <a href="tel:+"></a>
+
+    <script>
+
+        locationss = document.querySelectorAll(".questions")
+
+        locationss.forEach((location) => {
+            location.addEventListener('click', (event) => {
+                locateToInput = event.target.getAttribute('data-question')
+                document.getElementById('placeInput').value = locateToInput
+                // console.log(event.target.getAttribute("data-questions")) 
+                searchPlace()
+            })
+        })
+
+
+        let map;
+        let markers = [];
+        let infoWindows = [];
+
+        const places = [
+            {
+                name: "VC OFFICE",
+                location: { lat: 6.7072, lng: -1.6245 },
+            },
+            {
+                name: "ICT Office",
+                location: { lat: 6.7080, lng: -1.6250 },
+            },
+            {
+                name: "Admin Block",
+                location: { lat: 6.7095, lng: -1.6262 },
+            },
+        ];
+
+        function initMap() {
+            const campusCenter = { lat: 6.7080, lng: -1.6250 };
+
+            map = new google.maps.Map(document.getElementById("map"), {
+                zoom: 17,
+                center: campusCenter,
+            });
+
+            // Add all markers
+            places.forEach((place) => {
+                const marker = new google.maps.Marker({
+                    position: place.location,
+                    map: map,
+                    title: place.name,
+                });
+
+                const infoWindow = new google.maps.InfoWindow({
+                    content: `<strong>${place.name}</strong>`,
+                });
+
+                marker.addListener("click", () => {
+                    infoWindow.open(map, marker);
+                });
+
+                // Store marker and info window for searching
+                markers.push({ name: place.name.toLowerCase(), marker });
+                infoWindows.push(infoWindow);
+            });
+        }
+
+        // Search function
+        function searchPlace() {
+            const input = document.getElementById("placeInput").value.toLowerCase().trim();
+
+            input.value = "";
+            const found = markers.find((item, index) => {
+                if (item.name === input) {
+                    map.setCenter(item.marker.getPosition());
+                    map.setZoom(18);
+                    infoWindows[index].open(map, item.marker);
+                    return true;
+                }
+            });
+
+            if (!found) {
+                alert("Place not found 😢. Try again.");
+            }
+        }
+
+        
+    </script>
+
+    <!-- Google Maps API script -->
+    <script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD7CFxZokKPQwR9Ovv4VVBdbvR0jZId4ZM&callback=initMap"></script>
+</body>
+
+</html>

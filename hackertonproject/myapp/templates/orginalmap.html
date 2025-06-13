@@ -1,0 +1,586 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+
+    /* Full-page map styling */
+    #map-container {
+        position: relative;
+        height: 100vh;
+        width: 100vw;
+        margin: 0;
+        padding: 0;
+    }
+    
+    #map {
+        height: 100%;
+        width: 100%;
+    }
+    
+    /* Floating search controls - Mobile responsive */
+    .search-container {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    background-color: transparent;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    width: 75%;
+    max-width: 600px;
+}
+
+.search-container .form-control {
+    font-size: 14px;
+}
+
+.search-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: flex-end;
+}
+
+/* preloader */
+    #preloader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: white;
+    color: black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 20px;
+  }
+
+  #teamModal{
+    display: none;
+  }
+  
+  .direct-call{
+        display: none;
+    }
+   
+
+    @media (max-width: 768px) {
+      
+        .search-items {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .search-items > div {
+        width: 100%;
+    }
+
+    #routeBtn {
+        margin-top: 5px;
+    }
+
+     .modal.fade .modal-dialog {
+        transform: translateY(80%);
+        transition: transform 0.3s ease-out;
+    }
+
+    .modal.fade.show .modal-dialog {
+        transform: translateY(40%);
+    }
+
+    .direct-call{
+        display: block;
+    }
+
+    .big-call{
+        display: none;
+    }
+   
+    }
+    
+
+    /* Toggleable sidebar - Mobile responsive */
+    #sidebar {
+        position: fixed;
+        left: -300px;
+        top: 0;
+        bottom: 0;
+        width: 280px;
+        z-index: 900;
+        background-color: rgba(255, 255, 255, 0.98);
+        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+        transition: left 0.3s ease-in-out;
+        overflow-y: auto;
+    }
+    
+    #sidebar.show {
+        left: 0;
+    }
+    
+
+    /* Sidebar toggle button */
+    #sidebarToggle {
+        position: fixed;
+        left: 0;
+        top: 20px;
+        z-index: 999;
+        background-color: rgba(255, 255, 255, 0.9);
+        border: none;
+        border-radius: 0 4px 4px 0;
+        padding: 10px;
+        box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    
+    
+    @media (max-width: 500px) {
+        #sidebar {
+            width: 85%;
+        }
+
+        #sidebarToggle {
+            top: 50%;
+            padding: 8px;
+            z-index: 999; 
+        }
+         .modal-dialog {
+            margin: 10px;
+        }
+          .search-container{
+            background-color: transparent;
+            z-index: 1;
+            width: 85%;
+            max-width: 500px; 
+        }
+
+            #sidebar {
+            position: fixed;
+            left: -300px;
+            top: 0;
+            bottom: 0;
+            z-index: 100;
+    }
+       
+    }
+    
+    /* Modal styling adjustments */
+    .modal-backdrop {
+        z-index: 800;
+    }
+    
+    
+   
+    /* .modal {
+        z-index: 1001;
+        position:fixed;
+        left: -400px;
+
+    } */
+    
+    /* Place list items */
+    .place-list-item {
+        cursor: pointer;
+        transition: background-color 0.2s;
+    } 
+    .place-list-item:hover {
+        background-color: #f8f9fa;
+    }
+
+    /* .travelinfo{
+        width:90px; 
+        height: 60px;
+        padding: 5px; 
+    } */
+     
+</style>
+
+<!-- Map Container -->
+<div id="map-container">
+    <!-- Floating Search Controls -->
+    <div class="search-container">
+       <div class="search-items">
+    <div>
+        <label class="fw-bold">Start Point</label>
+        <input id="startInput" type="text" class="form-control" placeholder="Choose starting point..." list="placesDatalist">
+    </div>
+    <div>
+        <label class="fw-bold">Destination</label>
+        <input id="endInput" type="text" class="form-control" placeholder="Choose destination..." list="placesDatalist">
+    </div>
+    <div>
+        <button id="routeBtn" class="btn btn-primary w-100 mt-2">
+            <i class="fas fa-route"></i>
+        </button>
+    </div>
+</div>
+
+    </div>
+    
+    <!-- Sidebar Toggle Button -->
+    <button id="sidebarToggle" class="btn">
+        <i class="fas fa-bars"></i>
+    </button>
+    
+    <!-- Toggleable Sidebar -->
+    <div id="sidebar">
+        <div class="card shadow-sm h-100">
+            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                <h5 class="m-0"><i class="fas fa-map-marker-alt"></i> Campus Locations</h5>
+                <button id="closeSidebar" class="btn btn-sm btn-light">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="card-body p-0">
+                <ul class="list-group list-group-flush" id="placesSidebarList"></ul>
+            </div>
+            <div class="p-fixed top-0 mb-3 text-center"><a href="{% url 'home' %}" class="fs-3 fw-bold text-decoration-none text-black"> Home </a> </div>
+        </div>
+    </div>
+    
+    <!-- Map -->
+    <div id="map"></div>
+</div>
+
+<!-- Datalist for autocomplete -->
+<datalist id="placesDatalist">
+    {% for place in places %}
+        <option value="{{ place.name }}">{{ place.name }}</option>
+    {% endfor %}
+</datalist>
+
+<!-- <div id="preloader">Loading...</div> -->
+
+
+<!-- Place Info Modal -->
+<div class="modal fade" id="placeModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title text-center" id="placeModalTitle"></h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body "> 
+                <img id="placeModalImage" src="" class="img-fluid rounded mb-3" alt="">
+                <p class="text-center" id="placeModalDesc"></p>
+                <p class="text-center"><strong>Category:</strong> <span id="placeModalCategory"></span></p>
+            </div>
+
+            <!-- <div class="travel-info mt-3 p-3 bg-light rounded" id="TravelTime">
+                    <h6><i class="fas fa-route"></i> Travel Information</h6>
+                    <div id="travelDetails"></div>
+                </div> -->
+
+        </div>
+    </div>
+    
+</div>
+
+
+<!-- Support Team Modal -->
+<div class="modal fade" id="teamModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title"><i class="fas fa-headset"></i> Need Help?</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p class="text-danger mb-3">
+                    <i class="fas fa-exclamation-triangle"></i> 
+                    Location not found in our campus database.
+                </p>
+                <p>Please contact:</p>
+                <ul class="list-group" id="teamList"></ul>
+               
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+let map;
+let places = {{ places|safe }};
+let directionsService, directionsRenderer;
+let infoWindow;
+
+function initMap() {
+    // Initialize Map
+   
+    const allowedBounds = {
+        north:   7.356755346160421,
+        south: 7.342390415662072,
+        east: -2.3315992803825245,
+        west: -2.357198281794055 
+    }
+
+    const noFeaturesStyle = [
+  {
+    featureType: "all",
+    elementType: "all",
+    stylers: [
+      { visibility: "off" } 
+    ]
+  }
+];
+
+
+// Initialize the map just ONCE
+map = new google.maps.Map(document.getElementById('map'), {
+    center: { lat: 7.350573188232416, lng: -2.3426499572184567},
+    zoom: 17,
+    restriction: {
+        latLngBounds: allowedBounds,
+        strictBounds: true  
+    }, 
+    mapTypeControl: false,
+    streetViewControl: false,
+    mapId: "a4f234e75b6dbe66a5db0772",
+    gestureHandling: 'greedy',
+      styles: noFeaturesStyle               
+
+});
+
+
+   // Initialize Directions Service with custom route line
+    directionsService = new google.maps.DirectionsService();
+    directionsRenderer = new google.maps.DirectionsRenderer({ 
+        map: map,
+        polylineOptions: {
+            strokeColor: '#ff0000',   
+            strokeOpacity: 1.0,
+            strokeWeight: 8
+        }, 
+        // suppressMarkers: true  
+    });
+
+
+    // Add markers for all admin-added places
+    const placesSidebarList = document.getElementById('placesSidebarList');
+
+    places.forEach(place => {
+        // Create marker with custom icon
+        const marker = new google.maps.Marker({
+            position: { lat: place.latitude, lng: place.longitude },
+            map: map,
+            title: place.name,
+            icon: {
+                url: place.image_url, 
+                scaledSize: new google.maps.Size(35, 40) ,
+             labelOrigin: new google.maps.Point(16, -10) 
+            },
+            title: place.name,
+        label: {
+            text: place.name,
+            color: "black",
+            fontSize: "12px",
+            fontWeight: "bold",
+        },
+        animation: google.maps.Animation.DROP 
+        });
+
+
+        // Click event on marker shows place info
+        marker.addListener('click', () => {
+            document.getElementById('endInput').value = place.name;
+            showPlaceInfo(place);
+        });
+
+        // Add to sidebar list
+        const listItem = document.createElement('li');
+        listItem.className = 'list-group-item list-group-item-action place-list-item';
+        listItem.innerHTML = `<i class="fas fa-map-pin"></i> ${place.name}`;
+        listItem.onclick = (e) => {
+            e.stopPropagation();
+            document.getElementById('endInput').value = place.name;
+            
+            map.panTo({ lat: place.latitude, lng: place.longitude });
+            map.setZoom(18);
+        }; 
+        placesSidebarList.appendChild(listItem);
+    });
+
+    // Add event listener for route button
+    document.getElementById('routeBtn').addEventListener('click',()=>{
+        calculateRoute()
+        document.getElementById('startInput').value=""
+        document.getElementById('endInput').value="" 
+    })
+
+
+    // Sidebar toggle functionality
+    document.getElementById('sidebarToggle').addEventListener('click', () => {
+        document.getElementById('sidebar').classList.add('show');
+        document.getElementById('sidebarToggle').style.display = 'none';
+    });
+    
+    document.getElementById('closeSidebar').addEventListener('click', () => {
+        document.getElementById('sidebar').classList.remove('show');
+        document.getElementById('sidebarToggle').style.display = 'block';
+    });
+
+
+    // Handle window resize for better mobile experience
+    window.addEventListener('resize', function() {
+        google.maps.event.trigger(map, 'resize');
+    });
+
+    directionsRenderer.setMap(map) 
+}
+
+function showPlaceInfo(place) {
+    document.getElementById('placeModalTitle').innerText = place.name;
+    document.getElementById('placeModalImage').src = place.image_url;
+    document.getElementById('placeModalDesc').innerText = place.description;
+    document.getElementById('placeModalCategory').innerText = place.category || 'General';
+    new bootstrap.Modal(document.getElementById('placeModal')).show();
+}
+
+function calculateRoute() {
+    const startInput = document.getElementById('startInput').value.trim();
+    const endInput = document.getElementById('endInput').value.trim();
+
+    if (!startInput || !endInput) {
+        // Using SweetAlert for better mobile alerts
+        Swal.fire({
+            icon: 'info',
+            title: 'Route Error',
+            text: 'Please select both start and destination points',
+            confirmButtonColor: '#3085d6',
+        });
+        return;
+    }
+
+    // Find matching places in database
+    const startPlace = places.find(p => p.name.trim().toLowerCase() === startInput.trim().toLowerCase());
+    const endPlace = places.find(p => p.name.toLowerCase() === endInput.toLowerCase());
+
+    if (!startPlace || !endPlace) {
+        showSupportTeam();
+        return;
+    }
+
+    // Calculate route between valid places
+    directionsService.route({
+        origin: { lat: startPlace.latitude, lng: startPlace.longitude },
+        destination: { lat: endPlace.latitude, lng: endPlace.longitude },
+        travelMode: google.maps.TravelMode.WALKING 
+    }, (response, status) => {
+        if (status === 'OK') {
+            directionsRenderer.setDirections(response);
+
+             // Get and display travel time/distance
+           // Get travel info
+        const route = response.routes[0];
+        const leg = route.legs[0];
+        const duration = leg.duration.text;
+        const distance = leg.distance.text;
+
+        const midpoint = {
+        lat: (leg.start_location.lat() + leg.end_location.lat()) / 2,
+        lng: (leg.start_location.lng() + leg.end_location.lng()) / 2
+      };
+
+            const contentString = `
+            <div class="travelinfo">
+                <strong>Distance:</strong> ${distance}<br>
+            <strong>Duration:</strong> ${duration}
+            </div>`;
+           
+            if (infoWindow) {
+            infoWindow.close();
+        }
+
+      // Create new info window and set position
+      infoWindow = new google.maps.InfoWindow({
+        content: contentString,
+        position: midpoint
+      });
+
+      // Open the info window
+      infoWindow.open(map);
+        
+        // Show place info first
+        // showPlaceInfo(endPlace);
+        
+        // Then add travel info to the modal
+        // setTimeout(() => {  // Small delay to ensure modal is ready
+        //     showtravelInfo(distance, duration, endPlace);
+        // }, 300);
+
+            // Zoom to fit the route
+            const bounds = new google.maps.LatLngBounds();
+            response.routes[0].legs.forEach(leg => {
+                bounds.extend(leg.start_location);
+                bounds.extend(leg.end_location);
+            });
+            map.fitBounds(bounds);
+            showPlaceInfo(endPlace);
+
+        } else {
+            showSupportTeam();
+        }
+    });
+}
+
+// function showtravelInfo(distance, duration, destination) {   
+//     const travelDetails = document.getElementById('travelDetails');
+//     travelDetails.innerHTML = `
+//         <p><i class="fas fa-walking"></i> Walking time: ${duration}</p>
+//         <p><i class="fas fa-arrows-alt-h"></i> Distance: ${distance}</p>
+//     `;
+// }
+
+function showSupportTeam() {
+    
+    fetch('/api/team-members/')
+        .then(res => res.json())
+        .then(members => {
+            
+            const teamList = document.getElementById('teamList');
+            teamList.innerHTML = '';
+            members.forEach(member => {
+                teamList.innerHTML += `
+                    <li class="list-group-item">
+                        <div class="d-flex align-items-center">
+                            <img src="${member.photo_url}" width="40" height="40" class="rounded-circle me-3">
+                            <div>
+                                <strong>${member.name}</strong> 
+                                <small class="d-block text-muted">${member.role || 'Support'}</small> 
+                                <small class="big-call"><i class="fas fa-phone"></i> ${member.contact_number}</small> 
+                               <div class="direct-call"><a href="tel:+233${member.contact_number}"class="btn btn-primary">call</a> </div>
+                            </div>
+                        </div>
+                    </li> 
+                `; 
+            }); 
+            new bootstrap.Modal(document.getElementById('teamModal')).show(); 
+        })
+
+        .catch(error => {
+
+            
+            Swal.fire({
+                icon: 'error',
+                title: 'Connection Error',
+                text: 'Could not load support team information',
+                confirmButtonColor: '#3085d6',
+            });
+        });
+}
+
+window.onload(function(){
+    initMap()
+})
+</script>
+
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+
+<!-- Google Maps API -->
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCafX1QPC_yhAnBuffdjSilnybuGlpgPcM&callback=initMap" async defer></script>
+
+
+{% endblock %}

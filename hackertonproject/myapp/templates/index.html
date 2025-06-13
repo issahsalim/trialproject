@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UENR Smart Campus | AI Learning Assistant</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+
+    <link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+/>
+    <style>
+        :root {
+            --uenr-primary: #00509D;
+            --uenr-secondary: #003F88;
+            --uenr-accent: #FFD500;
+            --uenr-light: #F8F9FA;
+            --uenr-dark: #212529;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            overflow-x: hidden;
+            background-color: #f8fafc;
+        }
+
+        /* Navigation Bar */
+        .navbar {
+            background: linear-gradient(135deg, var(--uenr-primary), var(--uenr-secondary));
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 1rem 2rem;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.8rem;
+            color: white !important;
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar-brand img {
+            height: 40px;
+            margin-right: 10px;
+        }
+
+        .nav-link {
+            color: rgba(255, 255, 255, 0.9) !important;
+            font-weight: 500;
+            margin: 0 0.5rem;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .nav-link:hover {
+            color: white !important;
+            transform: translateY(-2px);
+        }
+
+        /* .nav-link.active {
+            color: var(--uenr-accent) !important;
+        }
+
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background-color: var(--uenr-accent);
+            border-radius: 3px;
+        } */
+
+        .navbar-toggler {
+            border: none;
+            color: white;
+        }
+
+        .navbar-toggler:focus {
+            box-shadow: none;
+        }
+
+        /* Hero Section */
+        .hero-section {
+            background: linear-gradient(rgba(0, 80, 157, 0.9), rgba(0, 63, 136, 0.9)),
+                url('https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 6rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-content {
+            z-index: 2;
+            position: relative;
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .hero-subtitle {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .btn-hero {
+            background-color: var(--uenr-accent);
+            color: var(--uenr-dark);
+            font-weight: 600;
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            border: none;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(255, 213, 0, 0.3);
+        }
+
+        .btn-hero:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(255, 213, 0, 0.4);
+            background-color: #ffdf33;
+        }
+
+        /* Features Section */
+        .features-section {
+            padding: 5rem 0;
+            background-color: white;
+        }
+
+        .section-title {
+            color: var(--uenr-primary);
+            font-weight: 700;
+            margin-bottom: 3rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        /* .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 50%;
+            height: 4px;
+            background-color: var(--uenr-accent);
+            border-radius: 2px;
+        } */
+
+        .feature-card {
+            border: none;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s;
+            height: 100%;
+            background-color: var(--uenr-light);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            color: var(--uenr-primary);
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-title {
+            color: var(--uenr-secondary);
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        /* Campus Map Section */
+        .map-section {
+            padding: 5rem 0;
+            background: linear-gradient(to bottom, #f1f5f9, #e2e8f0);
+        }
+
+        .map-container {
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        .map-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0, 80, 157, 0.8));
+            padding: 2rem;
+            color: white;
+        }
+
+        .map-title {
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        /* AI Assistant Section */
+        .ai-section {
+            padding: 5rem 0;
+            background-color: white;
+        }
+
+        .ai-card {
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s;
+            border: none;
+        }
+
+        .ai-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
+        }
+
+        .ai-icon {
+            font-size: 3rem;
+            color: var(--uenr-primary);
+            margin-bottom: 1.5rem;
+        }
+
+        .ai-feature {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
+        }
+
+        .ai-feature-icon {
+            font-size: 1.2rem;
+            color: var(--uenr-accent);
+            margin-right: 1rem;
+            margin-top: 0.2rem;
+        }
+
+        /* Footer */
+        .footer {
+            background: linear-gradient(135deg, var(--uenr-primary), var(--uenr-secondary));
+            color: white;
+            padding: 4rem 0 2rem;
+        }
+
+        .footer-logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            display: inline-block;
+        }
+
+        .footer-links h5 {
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        .footer-links h5::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 40%;
+            height: 3px;
+            background-color: var(--uenr-accent);
+            border-radius: 3px;
+        }
+
+        .footer-links ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.8rem;
+        }
+
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: white;
+            padding-left: 5px;
+        }
+
+        .social-icons a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            margin-right: 10px;
+            color: white;
+            transition: all 0.3s;
+        }
+
+        .social-icons a:hover {
+            background-color: var(--uenr-accent);
+            color: var(--uenr-dark);
+            transform: translateY(-3px);
+        }
+
+        .copyright {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 2rem;
+            margin-top: 2rem;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 992px) {
+            .hero-title {
+                font-size: 2.8rem;
+            }
+
+            .hero-subtitle {
+                font-size: 1.2rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 0.8rem 1rem;
+            }
+
+            .hero-title {
+                font-size: 2.2rem;
+            }
+
+            .hero-section {
+                padding: 4rem 0;
+                text-align: center;
+            }
+
+            .section-title::after {
+                left: 50%;
+                transform: translateX(-50%);
+                width: 30%;
+            }
+            
+            .navbar-brand {
+                font-weight: 700;
+                font-size: 1rem;
+                color: white !important;
+                display: flex;
+                align-items: center;
+            }
+
+            .navbar-brand img {
+                height: 20px;
+                margin-right: 10px;
+            }
+
+            .footer-logo img{
+            width: 120px;
+            height: 120px;
+            border-radius: 30px;
+        } 
+        .footer-logo {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            display: inline-block;
+        }
+
+        }
+
+        @media (max-width: 576px) {
+            .hero-title {
+                font-size: 1.8rem;
+            }
+
+            .btn-hero {
+                width: 100%;
+            }
+        }
+
+        /* Animations */
+        .animate-delay-1 {
+            animation-delay: 0.2s;
+        }
+
+        .animate-delay-2 {
+            animation-delay: 0.4s;
+        }
+
+        .animate-delay-3 {
+            animation-delay: 0.6s;
+        }
+
+         #btn {
+        padding: 10px 20px;
+        background-color: rgb(0, 0, 0);
+        border: none;
+        color: #fff;
+        z-index: 3;
+        position: fixed;
+        bottom: 0;
+        right: 0;
+        border-radius: 10px;
+        transform:translate(-30px, -40px);
+        display: none;
+       }
+    </style>
+    
+</head>
+
+<body>
+
+    <div class="scrolling">
+      <button id="btn"><i class="fa-brands fa-google-scholar"></i></button>
+    </div>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <img src="{% static 'img/uenr.jpeg' %}" alt="UENR Logo">
+                UENR Smart Campus
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'campusmap' %}">Campus Map</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'ai' %}">AI Assistant</a>
+                    </li>
+
+                    <!-- <li class="nav-item">
+                        <a class="nav-link" href="#">Departments</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Events</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Contact</a>
+                    </li> -->
+
+                    {% if request.user.is_authenticated %}
+                     <li class="nav-item ms-lg-3">
+                        <a class="btn btn-outline-light rounded-pill" href="{% url 'logout' %}">Logout</a> 
+                    </li>
+                    {%else%}
+                    <li class="nav-item ms-lg-3">
+                        <a class="btn btn-outline-light rounded-pill" href="{% url 'login' %}">Login</a> 
+                    </li>
+                    {%endif%}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <div class="hero-content">
+                      
+                            <h1 class="hero-title animate__animated animate__fadeInDown" style="white-space: nowrap;"> 
+                                Navigate & <span class="auto-type"></span>
+                            </h1> 
+                            
+                        <p class="hero-subtitle animate__animated animate__fadeIn animate__delay-1s">
+                            Your smart companion for campus navigation and AI-powered learning assistance
+                        </p>
+
+                        <div class="d-flex gap-3 animate__animated animate__fadeIn animate__delay-2s">
+                            <a href="{% url 'campusmap' %}">
+                                
+                                <button class="btn btn-hero">
+                                    Explore Campus <i class="fas fa-map-marked-alt ms-2"></i>
+                                </button>
+                            </a> 
+                            <button class="btn btn-outline-light rounded-pill">
+                                <a href="{% url 'ai' %}" class="text-decoration-none text-black fw-bold">Try AI Assistant</a> <i class="fas fa-robot ms-2"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- <div class="col-lg-6 d-none d-lg-block animate__animated animate__fadeIn animate__delay-1s">
+                    <img src="{% static 'img/uenr.jpeg' %}" 
+                        alt="Campus Illustration" class="img-fluid rounded-4 shadow">
+                </div> -->
+                
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features-section">
+        <div class="container">
+            <h2 class="d-flex justify-content-center section-title animate__animated animate__fadeIn">Smart Campus Features</h2>
+            <div class="row g-4 d-flex justify-content-center">
+                <div class="col-md-4 animate__animated animate__fadeInUp">
+                    <div class="card feature-card h-100 p-4">
+                        <div class="text-center">
+                            <div class="feature-icon">
+                                <i class="fas fa-map-marked-alt"></i>
+                            </div>
+                            <h3 class="feature-title">Interactive Campus Map</h3>
+                            <p class="text-muted">Find any building, facility or department with our 3D interactive map
+                                with real-time navigation.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 animate__animated animate__fadeInUp animate-delay-1">
+                    <div class="card feature-card h-100 p-4">
+                        <div class="text-center">
+                            <div class="feature-icon">
+                                <i class="fas fa-robot"></i>
+                            </div>
+                            <h3 class="feature-title">AI Learning Assistant</h3>
+                            <p class="text-muted">Get instant help with coursework, research, and academic questions
+                                from our smart AI assistant.</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- <div class="col-md-4 animate__animated animate__fadeInUp animate-delay-2">
+                    <div class="card feature-card h-100 p-4">
+                        <div class="text-center">
+                            <div class="feature-icon">
+                                <i class="fas fa-calendar-alt"></i>
+                            </div>
+                            <h3 class="feature-title">Event Calendar</h3>
+                            <p class="text-muted">Never miss important academic events, lectures, or social activities
+                                on campus.</p>
+                        </div>
+                    </div>
+                </div> -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Campus Map Section -->
+    <section class="map-section">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-5 mb-4 mb-lg-0 animate__animated animate__fadeIn">
+                    <h2 class="section-title">Explore Our Campus</h2>
+                    <p class="lead">Navigate the UENR campus with our interactive 3D map. Find buildings, departments,
+                        facilities, and more with ease.</p>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i> Real-time directions</li>
+                        <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i> Building information</li>
+                        <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i> Accessibility features
+                        </li>
+                        <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i> Points of interest</li>
+                    </ul>
+                    <a href="{% url 'campusmap' %}"> 
+                        
+                        <button class="btn btn-primary rounded-pill px-4 mt-3">
+                            Open Campus Map <i class="fas fa-external-link-alt ms-2"></i>
+                        </button>
+                    </a>
+                </div>
+                <div class="col-lg-7 animate__animated animate__fadeIn animate-delay-1">
+                    <div class="map-container">
+                        <img src="{% static 'img/uenrcampus.jpg'%}"
+                            alt="Campus Map" class="img-fluid w-100">
+                        <div class="map-overlay">
+                            <h4 class="map-title">UENR Main Campus</h4>
+                            <p class="mb-0">Sunyani, Ghana</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- AI Assistant Section -->
+    <section class="ai-section">
+        <div class="container">
+            <h2 class="text-center section-title animate__animated animate__fadeIn">Your AI Learning Companion</h2>
+            <div class="row g-4">
+                <div class="col-lg-6 animate__animated animate__fadeInLeft">
+                    <div class="ai-card p-4 h-100">
+                        <div class="text-center mb-4">
+                            <div class="ai-icon">
+                                <i class="fas fa-graduation-cap"></i>
+                            </div>
+                            <h3>How It Helps Students</h3>
+                        </div>
+                        <div>
+                            <div class="ai-feature">
+                                <div class="ai-feature-icon">
+                                    <i class="fas fa-lightbulb"></i>
+                                </div>
+                                <div>
+                                    <h5>Instant Homework Help</h5>
+                                    <p class="text-muted">Get explanations and guidance for your assignments across all
+                                        subjects.</p>
+                                </div>
+                            </div>
+                            <div class="ai-feature">
+                                <div class="ai-feature-icon">
+                                    <i class="fas fa-book"></i>
+                                </div>
+                                <div>
+                                    <h5>Research Assistance</h5>
+                                    <p class="text-muted">Find relevant resources and get help with your academic
+                                        research.</p>
+                                </div>
+                            </div>
+                            <div class="ai-feature">
+                                <div class="ai-feature-icon">
+                                    <i class="fas fa-chart-line"></i>
+                                </div>
+                                <div>
+                                    <h5>Study Planning</h5>
+                                    <p class="text-muted">Create personalized study plans based on your courses and
+                                        schedule.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 animate__animated animate__fadeInRight">
+                    <div class="ai-card p-4 h-100">
+                        <div class="text-center mb-4">
+                            <div class="ai-icon">
+                                <i class="fas fa-user-tie"></i>
+                            </div>
+                            <h3>How It Helps Faculty</h3>
+                        </div>
+                        <div>
+                            <div class="ai-feature">
+                                <div class="ai-feature-icon">
+                                    <i class="fas fa-chalkboard-teacher"></i>
+                                </div>
+                                <div>
+                                    <h5>Teaching Resources</h5>
+                                    <p class="text-muted">Access curated educational materials for your courses.</p>
+                                </div>
+                            </div>
+                            <div class="ai-feature">
+                                <div class="ai-feature-icon">
+                                    <i class="fas fa-clipboard-check"></i>
+                                </div>
+                                <div>
+                                    <h5>Assignment Creation</h5>
+                                    <p class="text-muted">Generate assignment ideas and questions based on your
+                                        syllabus.</p>
+                                </div>
+                            </div>
+                            <div class="ai-feature">
+                                <div class="ai-feature-icon">
+                                    <i class="fas fa-comments"></i>
+                                </div>
+                                <div>
+                                    <h5>Student Support</h5>
+                                    <p class="text-muted">Identify students who might need additional help based on
+                                        their queries.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center mt-5 animate__animated animate__fadeIn animate-delay-1">
+                <a href="{% url 'ai' %}">
+                    <button class="btn btn-primary btn-lg rounded-pill px-5">
+                        Try AI Assistant Now <i class="fas fa-arrow-right ms-2"></i>
+                    </button>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-lg-4">
+                    <div class="footer-logo">
+                        <img src="{% static 'img/uenr.jpeg' %}" alt="UENR Logo"
+                            class="me-2">
+                        UENR Smart Campus
+                    </div>
+                    <p>Empowering students and faculty with smart navigation and AI-powered learning tools at the
+                        University of Energy and Natural Resources.</p>
+                    <div class="social-icons mt-4">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-4">
+                    <div class="footer-links">
+                        <h5>Quick Links</h5>
+                        <ul> 
+                            <li><a href="#">Home</a></li>
+                            <li><a href="{%url 'campusmap' %}">Campus Map</a></li>
+                            <li><a href="{% url 'ai' %}">AI Assistant</a></li>
+                            <li><a href="#">Departments</a></li>
+                            <li><a href="#">Events</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-4">
+                    <div class="footer-links">
+                        <h5>Resources</h5>
+                        <ul>
+                            <li><a href="#">Library</a></li>
+                            <li><a href="#">Academic Calendar</a></li>
+                            <li><a href="#">Student Portal</a></li>
+                            <li><a href="#">Faculty Resources</a></li>
+                            <li><a href="#">Research Tools</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-4">
+                    <div class="footer-links">
+                        <h5>Contact Us</h5>
+                        <ul class="list-unstyled">
+                            <li class="mb-2"><i class="fas fa-map-marker-alt me-2"></i> Sunyani, Ghana</li>
+                            <li class="mb-2"><i class="fas fa-phone-alt me-2"></i> +233 123 456 789</li>
+                            <li class="mb-2"><i class="fas fa-envelope me-2"></i> info@uenr.edu.gh</li>
+                            <li class="mb-2"><i class="fas fa-clock me-2"></i> Mon-Fri: 8:00AM - 5:00PM</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="copyright">
+                <p class="mb-0">&copy; <span id="currentYear"></span>  University of Energy and Natural Resources (UENR). All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://unpkg.com/typed.js@2.1.0/dist/typed.umd.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+
+        currentYear=new Date()
+        document.getElementById('currentYear').innerHTML=currentYear.getFullYear()
+        
+
+      let ScrollTop = document.getElementById("btn");
+
+        const ScrollFunction = () => {
+        if (
+          document.body.scrollTop > 120 ||
+          document.documentElement.scrollTop > 120
+        ) {
+          ScrollTop.style.display = "block";
+        } else {
+          ScrollTop.style.display = "none";
+        }
+      };
+
+      window.addEventListener("scroll", () => {
+        ScrollFunction();
+      });
+
+      ScrollTop.addEventListener("click", () => {
+
+        document.documentElement.scrollTop = 0;
+        document.body.scrollTop = 0;
+      });
+
+          var typed= new Typed(".auto-type",{
+                strings:["Learn at UENR","Find locations"], 
+                typeSpeed:50,
+                backSpeed:60,
+                loop:true
+            });
+
+        // Activate animations when elements come into view
+        document.addEventListener('DOMContentLoaded', function () {
+            const animateElements = document.querySelectorAll('.animate__animated');
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add(entry.target.dataset.animate);
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, {
+                threshold: 0.1
+            });
+
+            animateElements.forEach(element => {
+                observer.observe(element);
+            });
+        });
+    </script>
+</body>
+
+</html>
